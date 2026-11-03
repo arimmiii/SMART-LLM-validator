@@ -1,59 +1,59 @@
-# **SMART-LLM: Smart Multi-Agent Robot Task Planning using Large Language Models**
+# **SMART-LLM: 대규모 언어 모델을 활용한 다중 에이전트 로봇 작업 계획**
 
-Shyam Sundar Kannan, Vishnunandan L. N. Venkatesh, and Byung-Cheol Min. 
+Shyam Sundar Kannan, Vishnunandan L. N. Venkatesh, Byung-Cheol Min.
 
-Submitted to IEEE International Conference on Robotics and Automation (ICRA ), 2024
+IEEE International Conference on Robotics and Automation (ICRA) 2024 투고
 
-[Project Page](https://sites.google.com/view/smart-llm/) | [arXiv](https://arxiv.org/abs/2309.10062) | [Video](https://www.youtube.com/watch?v=mssTPl7ifyI)
+[프로젝트 페이지](https://sites.google.com/view/smart-llm/) | [arXiv](https://arxiv.org/abs/2309.10062) | [영상](https://www.youtube.com/watch?v=mssTPl7ifyI)
 
-**Abstract:** In this work, we introduce SMART-LLM, an innovative framework designed for embodied multi-robot task planning. SMART-LLM: Smart Multi-Agent Robot Task Planning using Large Language Models (LLMs), harnesses the power of LLMs to convert high-level task instructions provided as input into a multi-robot task plan. It accomplishes this by executing a series of stages, including task decomposition, coalition formation, and task allocation, all guided by programmatic LLM prompts within the few-shot prompting paradigm. We create a benchmark dataset designed for validating the multi-robot task planning problem, encompassing four distinct categories of high-level instructions that vary in task complexity. Our evaluation experiments span both simulation and real-world scenarios, demonstrating that the proposed model can achieve promising results for generating multi-robot task plans.
+**초록:** 이 연구에서는 실제 환경에서 동작하는 다중 로봇의 작업 계획을 위한 혁신적인 프레임워크인 SMART-LLM을 소개합니다. SMART-LLM(Smart Multi-Agent Robot Task Planning using Large Language Models)은 대규모 언어 모델(LLM)을 활용해, 입력으로 받은 고수준 작업 지시를 다중 로봇 작업 계획으로 변환합니다. 이를 위해 작업 분해, 로봇 팀 구성, 작업 할당의 단계를 차례로 수행하며, 각 단계는 퓨샷(few-shot) 프롬프트 방식의 프로그램 형태 LLM 프롬프트로 진행됩니다. 또한 다중 로봇 작업 계획 문제를 검증하기 위한 벤치마크 데이터셋을 만들었으며, 이 데이터셋은 작업 복잡도가 서로 다른 4가지 범주의 고수준 지시로 구성됩니다. 시뮬레이션과 실제 환경에서 평가 실험을 진행한 결과, 제안한 모델이 다중 로봇 작업 계획 생성에서 유망한 성능을 보였습니다.
 
-## Setup
-Create a conda environment (or virtualenv):
+## 설치
+conda 환경(또는 virtualenv)을 만듭니다.
 ```
 conda create -n smartllm python==3.9
 ```
 
-Install dependencies:
+의존성을 설치합니다.
 ```
 pip install -r requirments.txt
 ```
 
-## Creating OpenAI API Key
-The code relies on OpenAI API. Create an API Key at https://platform.openai.com/.
+## OpenAI API 키 만들기
+이 코드는 OpenAI API를 사용합니다. https://platform.openai.com/ 에서 API 키를 만듭니다.
 
-Create a file named ```api_key.txt``` in the root folder of the project and paste your OpenAI Key in the file. 
+프로젝트 최상위 폴더에 ```api_key.txt``` 파일을 만들고, 그 안에 OpenAI 키를 붙여 넣습니다.
 
-## Running Script
-Run the following command to generate output execuate python scripts to perform the tasks in the given AI2Thor floor plans. 
+## 스크립트 실행
+아래 명령을 실행하면, 지정한 AI2Thor 평면도에서 작업을 수행하는 파이썬 실행 스크립트가 생성됩니다.
 
-Refer to https://ai2thor.allenai.org/demo for the layout of various AI2Thor floor plans.
+AI2Thor 평면도별 구조는 https://ai2thor.allenai.org/demo 를 참고하세요.
 ```
 python3 scripts/run_llm.py --floor-plan {floor_plan_no}
 ```
-Note: Refer to the script for running it on different versions of GPT models and changing the test dataset. 
+참고: 다른 버전의 GPT 모델로 실행하거나 테스트 데이터셋을 바꾸는 방법은 스크립트를 참고하세요.
 
-The above script should generate the executable code and store it in the ```logs``` folder.
+위 스크립트는 실행 가능한 코드를 만들어 ```logs``` 폴더에 저장합니다.
 
 
-Run the following script to execute the above generated scripts and execute it in an AI2THOR environment. 
+아래 스크립트를 실행하면 위에서 생성한 코드를 AI2THOR 환경에서 실행합니다.
 
-The script requires command which needs to be executed as parameter. ```command``` needs to be the folder name in the ```logs``` folder where the executable plans generated are stored. 
+실행할 대상을 ```command``` 매개변수로 넘겨야 합니다. ```command```에는 생성된 실행 계획이 저장된 ```logs``` 폴더 안의 폴더 이름을 넣습니다.
 ```
 python3 scripts/execute_plan.py --command {command}
 ```
-## Dataset
-The repository contains numerous commands and robots with various skill sets to perform heterogenous robot tasks. 
+## 데이터셋
+이 저장소에는 서로 다른 로봇이 함께 수행하는 작업을 위해, 다양한 명령과 여러 기술을 가진 로봇들이 들어 있습니다.
 
-Refer to ```data\final_test\``` for the various tasks, robots available for the tasks, and the final state of the environment after the task for evaluation. 
+작업의 종류, 작업에 사용할 수 있는 로봇, 평가에 쓰는 작업 후 환경의 최종 상태는 ```data\final_test\```를 참고하세요.
 
-The file name corresponds to the AI2THOR floor plans where the task will be executed. 
+파일 이름은 작업이 실행되는 AI2THOR 평면도에 해당합니다.
 
-Refer to ```resources\robots.py``` for the list of robots used in the final test and the skills possessed by each robot. 
+최종 테스트에 사용한 로봇 목록과 각 로봇의 기술은 ```resources\robots.py```를 참고하세요.
 
 
-## Citation
-If you find this work useful for your research, please consider citing:
+## 인용
+이 연구가 도움이 되었다면 아래와 같이 인용해 주세요.
 ```
 @article{kannan2023smart,
     title={SMART-LLM: Smart Multi-Agent Robot Task Planning using Large Language Models},

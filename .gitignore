@@ -9,3 +9,6 @@ __pycache__/
 logs/**/*.png
 results/sim/frames_timeout_run1/
 results/sim/run1_contact_*.png
+
+# 발표 자료는 로컬에만 둔다 (학번, 이름 포함)
+results/presentation/
