@@ -1,0 +1,45 @@
+import time
+import threading
+
+# Function to retrieve the knife
+def retrieve_knife(robot):
+    print(f"{robot['name']} is going to get the Knife.")
+    GoToObject(robot, 'Knife')
+    print(f"{robot['name']} picked up the Knife.")
+    PickupObject(robot, 'Knife')
+
+# Function to go to the tomato
+def go_to_tomato(robot):
+    print(f"{robot['name']} is going to get the Tomato.")
+    GoToObject(robot, 'Tomato')
+
+# Function to slice the tomato
+def slice_tomato(robot):
+    print(f"{robot['name']} is slicing the Tomato.")
+    SliceObject(robot, 'Tomato')
+
+# Function to put back the knife
+def put_back_knife(robot):
+    print(f"{robot['name']} is putting back the Knife.")
+    GoToObject(robot, 'CounterTop')
+    PutObject(robot, 'Knife', 'CounterTop')
+
+# Execute tasks in parallel where possible
+robot1_thread = threading.Thread(target=retrieve_knife, args=(robots[0],))
+robot2_thread = threading.Thread(target=go_to_tomato, args=(robots[1],))
+
+# Start both threads for parallel execution
+robot1_thread.start()
+robot2_thread.start()
+
+# Wait for both threads to finish before proceeding with slicing
+robot1_thread.join()
+robot2_thread.join()
+
+# Now slice tomato using either robot that has completed its task first 
+slice_tomato(robots[0])
+
+# After slicing, put back knife using robot that sliced it 
+put_back_knife(robots[0])
+
+print("Task of slicing tomato is done.")

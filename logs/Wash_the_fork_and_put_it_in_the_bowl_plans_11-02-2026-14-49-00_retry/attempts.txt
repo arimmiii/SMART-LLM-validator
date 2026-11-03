@@ -1,0 +1,4 @@
+attempt 1: exec_valid=False issues=format_fence | format_extra_text | skill_not_allowed:SwitchOn@robot1 | skill_not_allowed:PickupObject@robot2 | skill_not_allowed:PutObject@robot2 | skill_not_allowed:SwitchOff@robot1 | not_holding:PutObject(Fork)@robot2
+attempt 2: exec_valid=False issues=missing_robot_arg:GoToObject | missing_robot_arg:SwitchOn | missing_robot_arg:PickupObject | missing_robot_arg:PutObject | missing_robot_arg:SwitchOff
+attempt 3: exec_valid=False issues=skill_not_allowed:SwitchOn@robot1 | skill_not_allowed:PickupObject@robot2 | skill_not_allowed:PutObject@robot2 | skill_not_allowed:SwitchOff@robot1
+attempt 4: exec_valid=False issues=skill_not_allowed:PickupObject@robot2 | skill_not_allowed:PutObject@robot2 | skill_not_allowed:SwitchOn@robot1 | skill_not_allowed:SwitchOff@robot1

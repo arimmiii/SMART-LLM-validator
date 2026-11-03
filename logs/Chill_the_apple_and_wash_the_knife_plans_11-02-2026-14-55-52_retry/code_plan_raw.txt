@@ -1,0 +1,30 @@
+def chill_apple(robot):
+    GoToObject(robot, 'Apple')
+    PickupObject(robot, 'Apple')
+    GoToObject(robot, 'Fridge')
+    OpenObject(robot, 'Fridge')
+    PutObject(robot, 'Apple', 'Fridge')
+    CloseObject(robot, 'Fridge')
+
+def wash_knife(robot):
+    GoToObject(robot, 'Knife')
+    PickupObject(robot, 'Knife')
+    GoToObject(robot, 'Sink')
+    PutObject(robot, 'Knife', 'Sink') 
+    SwitchOn(robot, 'Faucet') 
+    time.sleep(5)  
+    SwitchOff(robot, 'Faucet') 
+    PickupObject(robot, 'Knife') 
+    GoToObject(robot, 'CounterTop') 
+    PutObject(robot, 'Knife', 'CounterTop')
+
+task1_thread = threading.Thread(target=chill_apple, args=(robots[0]['name'],))
+task2_thread = threading.Thread(target=wash_knife, args=(robots[1]['name'],))
+
+task1_thread.start()
+task2_thread.start()
+
+task1_thread.join()
+task2_thread.join()
+
+print("Task of chilling apple and washing knife is done.")

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMART-LLM 계획 오류, 실행 전에 잡기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700;900&family=Gothic+A1:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* === THEME: 색과 글꼴을 여기서 바꾸면 전체에 적용된다 === */
+:root{
+  --paper:#F0EBDE; --ink:#1F2BE0; --text:#1a1a1a; --grid:rgba(26,26,26,.07); --faint:rgba(26,26,26,.16);
+  --serif:'Noto Serif KR',Georgia,serif; --sans:'Gothic A1',sans-serif; --mono:'DM Mono','Gothic A1',monospace;
+  --stage-bg:#d8d2c2; --slide-bg:var(--paper);
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+
+/* === FIXED 16:9 STAGE (viewport-base.css 전체) === */
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--stage-bg,#000)}
+.deck-viewport{position:fixed;inset:0;overflow:hidden;background:var(--stage-bg,#000)}
+.deck-stage{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:hidden;transform-origin:0 0;background:var(--slide-bg,#fff)}
+.slide{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;display:block;visibility:hidden;opacity:0;pointer-events:none;background:var(--slide-bg,#fff)}
+.slide.active,.slide.visible{visibility:visible;opacity:1;pointer-events:auto;z-index:1}
+img,video,canvas,svg{max-width:100%;max-height:100%}
+.deck-controls{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:1000}
+@media print{
+  html,body{width:1920px;height:auto;overflow:visible;background:#fff}
+  .deck-viewport{position:static;overflow:visible;background:#fff}
+  .deck-stage{position:static;width:auto;height:auto;transform:none!important;background:none}
+  .slide{position:relative;display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;width:1920px;height:1080px;break-after:page;page-break-after:always}
+  .slide:last-child{break-after:auto;page-break-after:auto}
+  .deck-controls,.notes,.edit-hotzone,.edit-toggle{display:none!important}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.2s!important}}
+
+@media print{
+  @page{size:1920px 1080px;margin:0}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .reveal{opacity:1!important;transform:none!important;transition:none!important}
+  .slide{transition:none!important}
+}
+/* === SLIDE CHROME: 모눈, 위아래 선, 쪽 번호 === */
+.slide{color:var(--text);font-family:var(--sans);transition:opacity .28s}
+h1,h2,h3,.num,.label,.small b,.body b{color:var(--ink)}
+.slide::before{content:"";position:absolute;inset:0;background-image:linear-gradient(to right,var(--grid) 1px,transparent 1px),linear-gradient(to bottom,var(--grid) 1px,transparent 1px);background-size:40px 40px;pointer-events:none}
+.slide::after{content:"";position:absolute;left:80px;right:80px;top:36px;bottom:36px;border-top:1.5px solid var(--text);border-bottom:1.5px solid var(--text);pointer-events:none}
+.pagenum{position:absolute;right:80px;bottom:56px;font:400 22px var(--mono);letter-spacing:.06em}
+.foot{position:absolute;left:80px;bottom:56px;font:400 22px var(--sans)}
+.frame{position:absolute;left:80px;right:80px;top:70px;bottom:104px;display:flex;flex-direction:column}
+.topbar{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;border-bottom:1.5px solid var(--text);padding-bottom:20px;flex:none}
+h2{font:700 66px/1.25 var(--serif)}
+.tag{font:400 24px var(--mono);letter-spacing:.05em;white-space:nowrap;padding-bottom:10px}
+.main{flex:1;min-height:0;padding-top:30px;display:grid;gap:70px;align-content:center}
+.label{font:700 32px/1.4 var(--sans)}
+.body{font:400 36px/1.6 var(--sans)}
+.small{font:400 30px/1.55 var(--sans)}
+.num{font:900 180px/1 var(--serif)}
+.mono{font-family:var(--mono)}
+
+/* === 애니메이션: 슬라이드가 보일 때 차례로 나타난다 === */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.slide.visible .reveal{opacity:1;transform:none}
+.d1{transition-delay:.08s}.d2{transition-delay:.18s}.d3{transition-delay:.28s}.d4{transition-delay:.38s}.d5{transition-delay:.48s}
+
+/* === 표지와 마무리: 계단 무늬 === */
+.glitch{position:absolute;top:37px;bottom:37px;width:190px;display:flex;flex-direction:column}
+.glitch.r{right:80px;align-items:flex-end}.glitch.l{left:80px;align-items:flex-start}
+.glitch i{display:block;flex:1;background:var(--ink);max-width:190px}
+.glitch i.s{opacity:.35}
+.cover h1{position:absolute;left:80px;top:270px;font:900 150px/1.28 var(--serif)}
+.cover p{position:absolute;left:84px;top:690px;font:500 44px/1.5 var(--sans)}
+.cover .env{position:absolute;left:84px;top:780px;font:400 28px var(--mono);letter-spacing:.03em}
+.cover .top{position:absolute;left:80px;top:62px;font:400 24px var(--mono);letter-spacing:.05em}
+
+/* === 칸 그래프 === */
+.cells{display:flex;gap:5px}
+.cells i{display:block;width:30px;height:34px;background:var(--grid)}
+.cells i.on{background:var(--ink)}
+.bar{display:grid;grid-template-columns:330px 1fr 90px;align-items:center;gap:20px;padding:20px 0;border-bottom:1px solid var(--faint)}
+.bar b{font:700 30px var(--sans)}
+.bar span{font:500 32px var(--mono);text-align:right}
+
+/* === 흐름도 === */
+.flow{display:grid;grid-template-columns:1fr 90px 1fr 90px 1fr;align-items:center}
+.box{border:1.5px solid var(--ink);background:var(--paper);height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:10px;position:relative;z-index:1}
+.box.solid{background:var(--ink);color:var(--paper)}
+.box b{font:700 42px var(--serif);color:var(--ink)}
+.box.solid b{color:var(--paper)}
+.box em{font:400 26px var(--sans);font-style:normal}
+.arr{font:400 54px var(--mono);text-align:center}
+
+/* === 결과 표 === */
+.grid-res{display:grid;grid-template-columns:320px repeat(4,1fr);gap:12px 7px;grid-auto-rows:min-content;align-content:center}
+.grid-res .h{font:700 25px var(--sans);text-align:center;padding-bottom:6px}
+.grid-res .n{font:500 29px var(--sans);display:flex;align-items:center}
+.c{height:66px;display:flex;align-items:center;justify-content:center;font:700 26px var(--sans);border:1.5px solid var(--ink)}
+.c.y{background:var(--ink);color:var(--paper)}
+.c.u{background:repeating-linear-gradient(135deg,var(--paper) 0 8px,rgba(31,43,224,.28) 8px 11px)}
+.c.u span{background:var(--paper);padding:0 8px}
+
+/* === 행 목록 === */
+.row{display:grid;grid-template-columns:90px 1fr;gap:20px;padding:30px 0;border-bottom:1px solid var(--faint)}
+.row .i{font:500 34px var(--mono)}
+.row h3{font:700 42px/1.35 var(--serif);margin-bottom:8px}
+pre{font:500 30px/1.6 var(--mono);white-space:pre-wrap}
+.demo-img{display:block;width:1420px;margin:0 auto;border:1.5px solid var(--text)}
+.demo-vid{display:block;width:1640px;height:729px;margin:0 auto;background:#14141a;border:1.5px solid var(--text)}
+
+/* === 발표자 노트: N 키로 켜고 끈다. 슬라이드 밖에 표시된다 === */
+.notes{position:fixed;left:0;right:0;bottom:0;max-height:38vh;overflow:auto;background:#14141a;color:#f3f1ea;font:400 20px/1.65 var(--sans);padding:18px 28px;z-index:2000;display:none;white-space:pre-wrap}
+.notes.on{display:block}
+
+/* === 바로 고치기: 왼쪽 위 모서리에 마우스를 대거나 E 키 === */
+.edit-hotzone{position:fixed;top:0;left:0;width:80px;height:80px;z-index:10000;cursor:pointer}
+.edit-toggle{position:fixed;top:14px;left:14px;width:44px;height:44px;border:1.5px solid var(--text);background:var(--paper);color:var(--ink);font:500 18px var(--mono);opacity:0;pointer-events:none;transition:opacity .3s;z-index:10001;cursor:pointer}
+.edit-toggle.show,.edit-toggle.active{opacity:1;pointer-events:auto}
+[contenteditable=true]{outline:2px dashed var(--ink);outline-offset:3px}
+</style>
+</head>
+<body>
+<div class="deck-viewport">
+<main class="deck-stage" id="deckStage">
+
+<!-- 1. 표지 -->
+<section class="slide cover" data-sec="15" data-notes="안녕하세요, 김아림입니다. 저는 SMART-LLM이 만든 다중 로봇 작업 계획의 오류를, 실행하기 전에 자동으로 잡아서 고치는 방법을 실험했습니다.">
+  <div class="top">SMART-LLM 다중 로봇 계획</div>
+  <h1 class="reveal">계획 오류,<br>실행 전에 잡기</h1>
+  <p class="reveal d1">자동 검증과 재생성 루프로 보완하기</p>
+  <div class="env reveal d2">AI2-THOR · gpt-4o-mini</div>
+  <div class="glitch r" data-steps="300,300,220,220,260,120,120,180,60,60,240,240,140,90,90,200,300,160,160,70,70,230,120,120,40,180,90,40"></div>
+  <div class="foot" style="font-size:32px;bottom:62px">2023110224 김아림</div>
+</section>
+
+<!-- 2. 문제 정의 -->
+<section class="slide" data-sec="40" data-notes="SMART-LLM은 작업을 나누고, 로봇에게 할당하고, 코드로 만드는 3단계로 계획을 세웁니다. 태스크 9개를 토큰 한도 400과 1500으로 나눠 코드 18개를 만들고 검사했습니다. 18개 모두 코드블록이나 설명문이 섞여 있었고, 이 형식 문제를 빼고 내용만 봐도 3개만 통과했습니다. 로봇을 지정하지 않거나, 로봇 목록을 다시 만드는 오류가 많았습니다.">
+  <div class="frame">
+    <div class="topbar"><h2>만들어진 코드는 대부분 바로 쓸 수 없었다</h2><div class="tag">PROBLEM</div></div>
+    <div class="main" style="grid-template-columns:540px 1fr">
+      <div class="reveal">
+        <div class="num">3<span style="font-size:80px;font-weight:500"> / 18</span></div>
+        <div class="body" style="margin-top:24px">출력 형식을 빼고<br>내용만 검사해도<br>18개 중 3개만 통과</div>
+        <div class="small" style="margin-top:28px">태스크 9개 × 토큰 한도 2가지<br>(검증기 기준)</div>
+      </div>
+      <div class="reveal d1">
+        <div class="label" style="padding-bottom:8px">실패 유형 (18개 중, 겹칠 수 있음)</div>
+        <div class="bar"><b>출력 형식 오염</b><div class="cells" data-on="18"></div><span>18</span></div>
+        <div class="bar"><b>로봇 인자 누락</b><div class="cells" data-on="7"></div><span>7</span></div>
+        <div class="bar"><b>로봇 목록 재정의</b><div class="cells" data-on="7"></div><span>7</span></div>
+        <div class="bar"><b>로봇 자리에 문자열</b><div class="cells" data-on="3"></div><span>3</span></div>
+        <div class="bar"><b>물건을 든 채로 종료</b><div class="cells" data-on="3"></div><span>3</span></div>
+        <div class="bar"><b>넣을 수 없는 물건</b><div class="cells" data-on="2"></div><span>2</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="pagenum">02</div>
+</section>
+
+<!-- 3. 방법 -->
+<section class="slide" data-sec="35" data-notes="그래서 시뮬레이터를 돌리기 전에 코드를 읽어서 검사하는 검증기를 만들었습니다. 오류가 있으면 그 내용을 모델에 돌려줘서 최대 3번까지 다시 만들게 합니다. 시뮬레이터는 태스크 하나에 몇 분에서 수십 분 걸리지만, 재생성은 태스크 9개에 약 1분이면 끝납니다.">
+  <div class="frame">
+    <div class="topbar"><h2>실행하기 전에 검사하고, 틀리면 다시 만든다</h2><div class="tag">METHOD</div></div>
+    <div class="main" style="grid-template-rows:auto auto;gap:0">
+      <div class="flow reveal">
+        <div class="box"><b>코드 생성</b><em>SMART-LLM 3단계</em></div><div class="arr">→</div>
+        <div class="box"><b>정적 검증</b><em>실행하지 않고 코드만 읽음</em></div><div class="arr">→</div>
+        <div class="box solid"><b>시뮬레이터 실행</b><em>통과한 코드만</em></div>
+      </div>
+      <div class="reveal d1" style="display:grid;grid-template-columns:1fr 90px 1fr 90px 1fr;margin-top:0">
+        <div></div><div></div>
+        <div style="text-align:center"><div class="arr">↑↓</div><div class="box" style="height:150px;border-style:dashed"><b style="font-size:38px">재생성, 최대 3회</b><em>오류 내용을 모델에 알려 줌</em></div></div>
+        <div></div>
+        <div class="small" style="align-self:end;padding-left:10px"><b>약 1분</b> 재생성, 태스크 9개<br><b>몇 분~수십 분</b> 시뮬레이터, 태스크 1개</div>
+      </div>
+    </div>
+  </div>
+  <div class="pagenum">03</div>
+</section>
+
+<!-- 4. 검증기 결과 -->
+<section class="slide" data-sec="35" data-notes="검증 통과는 18개 중 3개에서 11개, 규칙을 보강한 뒤 14개까지 늘었습니다. 다만 이건 검증기를 통과한 개수입니다. 1차 코드 16개를 실제로 돌리니 5개가 실패했고, 이 실패를 보고 규칙 3가지를 추가해 원본에서 다시 만든 것이 2차입니다.">
+  <div class="frame">
+    <div class="topbar"><h2>검증을 통과해도 실행에서 실패할 수 있었다</h2><div class="tag">VALIDATOR</div></div>
+    <div class="main" style="grid-template-columns:1090px 1fr">
+      <div class="reveal">
+        <div class="label" style="padding-bottom:8px">검증기 통과 (같은 규칙으로 채점, 18개 중)</div>
+        <div class="bar"><b>원본</b><div class="cells" data-on="3"></div><span>3</span></div>
+        <div class="bar"><b>1차 재생성</b><div class="cells" data-on="11"></div><span>11</span></div>
+        <div class="bar"><b>2차 재생성</b><div class="cells" data-on="14"></div><span>14</span></div>
+        <div class="body" style="margin-top:44px"><b>검증 통과 ≠ 작업 성공</b><br>1차 코드 16개를 실행하니 5개가 실패</div>
+      </div>
+      <div class="reveal d1">
+        <div class="label" style="padding-bottom:12px;border-bottom:1.5px solid var(--text)">실패를 보고 추가한 규칙</div>
+        <div style="padding:22px 0;border-bottom:1px solid var(--faint)"><div class="small"><b>TypeError 2개</b></div><div class="small">로봇 자리에 문자열이 들어감</div></div>
+        <div style="padding:22px 0;border-bottom:1px solid var(--faint)"><div class="small"><b>목표 실패 1개</b></div><div class="small">상추를 든 채로 종료</div></div>
+        <div style="padding:22px 0;border-bottom:1px solid var(--faint)"><div class="small"><b>목표 실패 2개</b></div><div class="small">자르지 않은 빵을 토스터에 넣음</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="pagenum">04</div>
+</section>
+
+<!-- 5. 시연: 1차 오류 -->
+<section class="slide" data-sec="20" data-notes="실제 사례를 보겠습니다. Chill the apple 태스크입니다. 1차 코드는 로봇 정보 대신 이름 글자만 넘겨서, 실행하자마자 TypeError로 멈췄습니다. 2차에서는 이 한 곳이 고쳐졌습니다.">
+  <div class="frame">
+    <div class="topbar"><h2>시연 1. 1차 코드는 시작하자마자 멈췄다</h2><div class="tag">DEMO · BEFORE</div></div>
+    <div class="main" style="padding-top:34px;align-content:start"><img class="demo-img reveal" src="assets/error_chill_1500_retry.png" alt="1차 재생성 코드의 TypeError 실행 로그와, 1차와 2차 코드의 차이"></div>
+  </div>
+  <div class="foot">실행 로그에서 로봇 1의 오류 부분을 발췌. 같은 오류가 로봇 2에서도 발생함</div>
+  <div class="pagenum">05</div>
+</section>
+
+<!-- 6. 시연: 2차 영상 -->
+<section class="slide" data-sec="40" data-video="1" data-notes="이제 2차 코드입니다. 로봇 2대가 동시에 일합니다. 로봇 1은 사과를 냉장고에 넣고, 로봇 2는 칼을 씻습니다. 실제 실행은 더 오래 걸렸고 보기 쉽게 속도를 조절했습니다. 결과는 SR 1, TC 1입니다. 다만 점수 조건은 냉장고 안의 사과뿐이고, 칼을 씻었는지는 점수에 들어가지 않습니다.">
+  <div class="frame">
+    <div class="topbar"><h2>시연 2. 2차 코드는 로봇 2대가 끝까지 수행했다</h2><div class="tag">DEMO · AFTER</div></div>
+    <div class="main" style="padding-top:24px;align-content:start;gap:12px">
+      <video class="demo-vid" id="demoVideo" src="assets/chill_apple_1500_retry2_captioned.mp4" controls muted playsinline preload="auto"></video>
+    </div>
+  </div>
+  <div class="foot">12개 중 대표 사례 1개 · 토큰 한도 1500 · 속도 조절함 · 칼 씻기는 점수 조건에 없음</div>
+  <div class="pagenum">06</div>
+</section>
+
+<!-- 7. 시뮬레이터 결과 -->
+<section class="slide" data-sec="45" data-notes="같은 6개 태스크를 토큰 한도별로 나눈 12개를 비교했습니다. 목표 달성은 7개에서 11개로 늘었고, 실패는 3개에서 0개가 됐습니다. 시간 초과는 판정 불가로 따로 셌는데, 판정 불가를 모두 성공이나 실패로 가정해도 범위가 겹치지 않습니다. SR에는 코드의 빈 줄로 계산되는 값이 들어가 있어서 TC를 주 지표로 봤습니다.">
+  <div class="frame">
+    <div class="topbar"><h2>목표 달성: 12개 중 7개에서 11개로</h2><div class="tag">SIMULATOR</div></div>
+    <div class="main" style="grid-template-columns:400px 1fr;gap:60px;padding-top:30px">
+      <div class="reveal">
+        <div class="label">목표 달성 (TC 1)</div>
+        <div class="num" style="font-size:150px;margin-top:6px">7<span style="font-size:80px;font-weight:500"> → </span>11</div>
+        <div class="small" style="margin-top:26px;border-top:1px solid var(--faint);padding-top:18px"><b>실패</b> 3개 → 0개<br><b>판정 불가</b> 2개 → 1개<br><b>SR 1</b> 5개 → 6개</div>
+        <div class="small" style="margin-top:18px;border-top:1px solid var(--faint);padding-top:18px">판정 불가를 범위로 봐도<br>7~9개 vs 11~12개</div>
+      </div>
+      <div class="grid-res reveal d1" id="resGrid"></div>
+    </div>
+  </div>
+  <div class="foot">판정 불가: 제한 시간 안에 끝나지 않거나 연결이 끊겨 결과가 없음</div>
+  <div class="pagenum">07</div>
+</section>
+
+<!-- 8. 예상과 달랐던 것 -->
+<section class="slide" data-sec="30" data-notes="예상과 다른 점도 있었습니다. 토큰 한도 400에서 답이 잘리는 게 원인이라고 생각했는데, 한도를 늘려도 잘림만 사라지고 검증 통과는 늘지 않았습니다. 대신 실험 중에 로봇 이름이 덮어쓰이는 버그를 찾았고, 한 줄을 고치자 4번 모두 실패하던 Wash the fork가 통과했습니다.">
+  <div class="frame">
+    <div class="topbar"><h2>가설은 확인되지 않았고, 대신 버그를 찾았다</h2><div class="tag">FINDINGS</div></div>
+    <div class="main" style="grid-template-columns:1fr 1fr;padding-top:50px">
+      <div class="reveal">
+        <div class="label">가설: 토큰 한도 400 때문에 답이 잘려서 실패한다</div>
+        <div class="bar" style="grid-template-columns:1fr 150px 150px;margin-top:26px;border-bottom:1.5px solid var(--text)"><b></b><span>400</span><span>1500</span></div>
+        <div class="bar" style="grid-template-columns:1fr 150px 150px"><b>답변 잘림 (9개 중)</b><span>8</span><span>0</span></div>
+        <div class="bar" style="grid-template-columns:1fr 150px 150px"><b>재생성 전 통과</b><span>4</span><span>0</span></div>
+        <div class="bar" style="grid-template-columns:1fr 150px 150px"><b>재생성 후 통과</b><span>8</span><span>7</span></div>
+        <div class="body" style="margin-top:36px">잘림은 사라졌지만 통과는 늘지 않음<br><span class="small">(조건별 1회)</span></div>
+      </div>
+      <div class="reveal d1">
+        <div class="label">버그: 태스크끼리 로봇 이름을 덮어씀</div>
+        <pre style="margin-top:26px;padding:24px;border:1.5px solid var(--text);background:var(--paper);font-size:27px"><s>rob = robots.robots[r_id-1]</s>
+rob = copy.deepcopy(robots.robots[r_id-1])</pre>
+        <div class="bar" style="grid-template-columns:1fr 220px 220px;margin-top:26px;border-bottom:1.5px solid var(--text)"><b>Wash the fork</b><span style="font:700 26px var(--sans)">수정 전</span><span style="font:700 26px var(--sans)">수정 후</span></div>
+        <div class="bar" style="grid-template-columns:1fr 220px 220px"><b>한도 400</b><span style="font:500 26px var(--sans)">4회 모두 실패</span><span style="font:500 26px var(--sans)">첫 시도 통과</span></div>
+        <div class="bar" style="grid-template-columns:1fr 220px 220px"><b>한도 1500</b><span style="font:500 26px var(--sans)">4회 모두 실패</span><span style="font:500 26px var(--sans)">재생성 1회</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="pagenum">08</div>
+</section>
+
+<!-- 9. 한계 -->
+<section class="slide" data-sec="30" data-notes="한계도 있습니다. 첫째, 실패를 보고 만든 규칙을 같은 태스크에 적용한 표본 내 결과입니다. 둘째, 조건별로 1~2번만 돌렸고 실행마다 결과가 달랐습니다. 셋째, TC는 마지막 상태만 봐서 12개 중 6개는 씻었는지 확인하지 않습니다. Slice apple과 Toast처럼 아직 안 풀린 문제도 남아 있습니다.">
+  <div class="frame">
+    <div class="topbar"><h2>이 숫자는 어디까지 믿을 수 있나</h2><div class="tag">LIMITS</div></div>
+    <div class="main" style="grid-template-columns:1160px 1fr;padding-top:14px">
+      <div class="reveal">
+        <div class="row"><div class="i">01</div><div><h3>표본 내 결과</h3><div class="small">실패를 보고 만든 규칙을 같은 태스크에 다시 적용했다.<br>처음 보는 태스크에서도 효과가 있는지는 모른다.</div></div></div>
+        <div class="row"><div class="i">02</div><div><h3>작은 표본, 큰 편차</h3><div class="small">조건별 1~2회 실행. Wash the fork(1500)는 같은 코드가<br>한 번은 15분 초과, 한 번은 9분 51초에 끝났다.</div></div></div>
+        <div class="row" style="border:0"><div class="i">03</div><div><h3>TC는 작업 전체를 보지 않는다</h3><div class="small">마지막 상태만 확인한다. 12개 중 6개는 씻었는지를 확인하지 않는다.</div></div></div>
+      </div>
+      <div class="reveal d1" style="padding-top:30px">
+        <div class="label" style="padding-bottom:12px;border-bottom:1.5px solid var(--text)">아직 안 풀린 문제</div>
+        <div style="padding:22px 0;border-bottom:1px solid var(--faint)"><div class="small"><b>Slice apple, Toast a slice</b></div><div class="small">4번 시도해도 검증 실패</div></div>
+        <div style="padding:22px 0;border-bottom:1px solid var(--faint)"><div class="small"><b>Slice the tomato (1500)</b></div><div class="small">30분에도 끝나지 않음</div></div>
+        <div style="padding:22px 0"><div class="small"><b>Put two vegetables</b></div><div class="small">검증 통과, 정답과 다른 재료 선택</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="pagenum">09</div>
+</section>
+
+<!-- 10. 결론 -->
+<section class="slide" data-sec="20" data-notes="정리하면, 실행 전 검증과 재생성으로 검증 통과는 18개 중 3개에서 14개로, 규칙을 보강한 뒤 시뮬레이터 목표 달성은 12개 중 7개에서 11개로 늘었습니다. 다음에는 안 풀린 문제의 원인이 할당 단계에 있는지 확인하고, LaMMA-P 기반 작업 할당으로 확장해 SMART-LLM과 비교하겠습니다. 감사합니다.">
+  <div class="glitch l" data-steps="40,90,180,40,120,120,230,70,70,160,160,300,200,90,90,140,240,240,60,60,180,120,120,260,220,220,300,300"></div>
+  <div style="position:absolute;left:340px;right:80px;top:150px">
+    <h2 class="reveal" style="font-size:84px;font-weight:900">실행 전에 잡을 수 있는<br>오류는 많았다</h2>
+    <div class="reveal d1" style="display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:64px;border-top:1.5px solid var(--text);padding-top:30px">
+      <div><div class="label">검증 통과 (18개 중)</div><div class="num" style="font-size:120px;margin-top:10px">3<span style="font-size:64px;font-weight:500"> → </span>14</div></div>
+      <div><div class="label">시뮬레이터 목표 달성 (12개 중)</div><div class="num" style="font-size:120px;margin-top:10px">7<span style="font-size:64px;font-weight:500"> → </span>11</div></div>
+    </div>
+    <div class="body reveal d2" style="margin-top:50px;border-top:1px solid var(--faint);padding-top:26px"><b>다음 단계</b>&nbsp; 안 풀린 문제가 할당 단계 때문인지 확인하고,<br>LaMMA-P 기반 작업 할당을 구현해 SMART-LLM과 비교한다</div>
+  </div>
+  <div class="pagenum">10</div>
+</section>
+
+</main>
+</div>
+
+<div class="notes" id="notes" aria-live="polite"><div id="nh"></div><div id="nb"></div></div>
+<div class="edit-hotzone" id="hotzone"></div>
+<button class="edit-toggle" id="editToggle" title="고치기 (E)" aria-label="고치기">E</button>
+
+<script>
+/* === 데이터로 그리는 요소: 칸 그래프, 계단 무늬, 결과 표 === */
+/* 고친 내용 복원: 파일을 고쳐 배포할 때 DECK_VERSION 을 올린다 */
+const DECK_VERSION='v2',KEY='smart-llm-talk-'+DECK_VERSION;
+try{const saved=localStorage.getItem(KEY);if(saved)document.getElementById('deckStage').innerHTML=saved}catch(e){}
+document.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+document.querySelectorAll('.cells').forEach(el=>{
+  if(el.children.length)return;
+  const on=+el.dataset.on;
+  for(let i=0;i<18;i++){const c=document.createElement('i');if(i<on)c.className='on';el.append(c)}
+});
+document.querySelectorAll('.glitch').forEach(el=>{
+  if(el.children.length)return;
+  el.setAttribute('aria-hidden','true');
+  el.dataset.steps.split(',').forEach((w,i)=>{const c=document.createElement('i');c.style.width=w+'px';if(i%3==2)c.className='s';el.append(c)});
+});
+/* y=목표 달성, f=실패, u=판정 불가. 출처: results/sim/progress.md */
+const RES=[['Put mug','yyyy'],['Throw the Spatula','yyyy'],['Chill the apple','yyfy'],['Wash the fork','yyuy'],['Wash the lettuce','fyyy'],['Slice the tomato','fyuu']];
+const g=document.getElementById('resGrid'),T={y:'달성',f:'실패',u:'판정 불가'};
+if(!g.children.length)g.innerHTML='<div></div>'+['400 · 1차','400 · 2차','1500 · 1차','1500 · 2차'].map(h=>`<div class="h">${h}</div>`).join('')+
+  RES.map(([n,s])=>`<div class="n">${n}</div>`+[...s].map(k=>`<div class="c ${k}"><span>${T[k]}</span></div>`).join('')).join('');
+
+/* === 슬라이드 진행: 방향키, 스페이스, 페이지 키, 휠, 터치 === */
+class SlidePresentation{
+  constructor(){
+    this.slides=[...document.querySelectorAll('.slide')];
+    this.stage=document.getElementById('deckStage');
+    this.video=document.getElementById('demoVideo');
+    this.notes=document.getElementById('notes');
+    this.scale();addEventListener('resize',()=>this.scale());
+    addEventListener('keydown',e=>this.key(e));
+    let last=0;addEventListener('wheel',e=>{const n=Date.now();if(n-last<600||editor.on)return;last=n;this.go(this.i+(e.deltaY>0?1:-1))},{passive:true});
+    let x0=0;addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});
+    addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-x0;if(Math.abs(d)>50)this.go(this.i+(d<0?1:-1))},{passive:true});
+    this.go((parseInt(location.hash.slice(1))||1)-1);
+  }
+  scale(){const k=Math.min(innerWidth/1920,innerHeight/1080);this.stage.style.transform=`translate(${(innerWidth-1920*k)/2}px,${(innerHeight-1080*k)/2}px) scale(${k})`}
+  key(e){
+    if(e.target.getAttribute&&e.target.getAttribute('contenteditable')==='true')return;
+    if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();this.go(this.i+1)}
+    else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();this.go(this.i-1)}
+    else if(e.key==='n'||e.key==='N'){this.notes.classList.toggle('on')}
+  }
+  go(n){
+    this.i=Math.max(0,Math.min(n,this.slides.length-1));
+    this.slides.forEach((s,j)=>{s.classList.toggle('active',j===this.i);s.classList.toggle('visible',j===this.i)});
+    const s=this.slides[this.i];
+    document.getElementById('nh').textContent=`[${this.i+1}/${this.slides.length} · 약 ${s.dataset.sec}초]`;document.getElementById('nb').textContent=s.dataset.notes;
+    history.replaceState(null,'','#'+(this.i+1));
+    if(s.dataset.video){this.video.currentTime=0;this.video.play().catch(()=>{})}else{this.video.pause()}
+  }
+}
+
+/* === 바로 고치기: 글자를 눌러 수정하고 Ctrl+S 로 저장 === */
+const editor={on:false,
+  toggle(){this.on=!this.on;document.querySelectorAll('h1,h2,h3,p,.body,.small,.label,.foot,.tag,.env,.num,.bar b,.bar span,.box b,.box em,.c span,.n,.h,pre,#nb').forEach(el=>el.setAttribute('contenteditable',this.on));if(this.on)deck.notes.classList.add('on');
+    document.getElementById('editToggle').classList.toggle('active',this.on);if(!this.on)this.keep()},
+  keep(){try{localStorage.setItem('smart-llm-talk',document.getElementById('deckStage').innerHTML)}catch(e){}},
+  async save(){if(this.on)this.toggle();const html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+    try{const h=await showSaveFilePicker({suggestedName:'smart_llm_talk.html',types:[{description:'HTML',accept:{'text/html':['.html']}}]});const w=await h.createWritable();await w.write(html);await w.close();return}
+    catch(e){if(e.name==='AbortError')return}
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));a.download='smart_llm_talk.html';a.click()}
+};
+const hz=document.getElementById('hotzone'),et=document.getElementById('editToggle');let ht=null;
+const hide=()=>{ht=setTimeout(()=>{if(!editor.on)et.classList.remove('show')},400)};
+hz.addEventListener('mouseenter',()=>{clearTimeout(ht);et.classList.add('show')});hz.addEventListener('mouseleave',hide);
+et.addEventListener('mouseenter',()=>clearTimeout(ht));et.addEventListener('mouseleave',hide);
+et.addEventListener('click',()=>editor.toggle());hz.addEventListener('click',()=>editor.toggle());
+addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();editor.save();return}
+  if((e.key==='e'||e.key==='E')&&!(e.target.getAttribute&&e.target.getAttribute('contenteditable')==='true'))editor.toggle();
+});
+const deck=new SlidePresentation();
+document.addEventListener('input',e=>{if(e.target.id==='nb')deck.slides[deck.i].dataset.notes=e.target.textContent;editor.keep()});
+</script>
+</body>
+</html>

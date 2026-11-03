@@ -1,0 +1,13 @@
+def throw_spatula_in_trash(robot):
+    # Step-by-step actions for throwing spatula in trash using the specified robot.
+    # 0: SubTask 1: Throw the Spatula in the Trash
+    # 1: Go to the Spatula.
+    GoToObject(robot, 'Spatula')          # Move to spatula location.
+    # 2: Pick up the Spatula.
+    PickupObject(robot, 'Spatula')        # Pick up spatula.
+    # 3: Go to the Garbage Can.
+    GoToObject(robot, 'GarbageCan')       # Move to garbage can location.
+    # 4: Throw the Spatula in the Trash.
+    PutObject(robot, 'Spatula', 'GarbageCan') # Throw spatula into garbage can.
+
+throw_spatula_in_trash(robots[1])

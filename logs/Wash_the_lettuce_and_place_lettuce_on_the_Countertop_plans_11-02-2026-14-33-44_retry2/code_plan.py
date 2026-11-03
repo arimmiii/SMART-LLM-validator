@@ -1,0 +1,24 @@
+def wash_lettuce(robot):
+    # Execute washing process using robot's capabilities.
+    GoToObject(robot, 'Lettuce')
+    PickupObject(robot, 'Lettuce')
+    GoToObject(robot, 'Sink')
+    PutObject(robot, 'Lettuce', 'Sink')
+    SwitchOn(robot, 'Faucet')
+    time.sleep(5)  # Simulate washing time
+    SwitchOff(robot, 'Faucet')
+    PickupObject(robot, 'Lettuce')
+
+def place_lettuce_on_countertop(robot):
+    # Execute placing process using robot's capabilities.
+    GoToObject(robot, 'CounterTop')
+    PutObject(robot, 'Lettuce', 'CounterTop')
+
+# Allocate tasks based on availability and skill set.
+robot_for_washing = robots[0]  # Assigning Robot1 for washing task 
+wash_lettuce(robot_for_washing)
+
+# After washing, assign SubTask 2 (Place Lettuce on Countertop) to Robot1 again
+place_lettuce_on_countertop(robot_for_washing)
+
+print("Task wash lettuce and place it on countertop is done!")

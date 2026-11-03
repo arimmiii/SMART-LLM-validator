@@ -1,0 +1,31 @@
+def wash_lettuce(robot):
+    # 0: SubTask 1: Wash the Lettuce
+    # 1: Go to the Lettuce using the selected robot.
+    GoToObject(robot, 'Lettuce')
+    # 2: Pick up the Lettuce using the selected robot.
+    PickupObject(robot, 'Lettuce')
+    # 3: Go to the Sink using the selected robot.
+    GoToObject(robot, 'Sink')
+    # 4: Put the Lettuce inside the sink using the selected robot.
+    PutObject(robot, 'Lettuce', 'Sink')
+    # 5: Switch on the Faucet to clean the Lettuce using the selected robot.
+    SwitchOn(robot, 'Faucet')
+    # 6: Wait for a while to let the lettuce clean using the selected robot.
+    time.sleep(5)
+    # 7: Switch off the Faucet using the selected robot.
+    SwitchOff(robot, 'Faucet')
+    # 8: Pick up the clean Lettuce using the selected robot.
+    PickupObject(robot, 'Lettuce')
+
+def place_lettuce_on_countertop(robot):
+    # 0: SubTask 2: Place the Lettuce on Countertop
+    # 1: Go to Countertop using the selected robot.
+    GoToObject(robot, 'CounterTop')
+    # 2: Put the Lettuce on Countertop using the selected robot.
+    PutObject(robot, 'Lettuce', 'CounterTop')
+
+# Execute SubTask 1 with Robot 3 for washing
+wash_lettuce(robots[2])   # Using Robot 3 for washing
+
+# Execute SubTask 2 with Robot 3 for placing
+place_lettuce_on_countertop(robots[2])   # Using Robot 3 for placing

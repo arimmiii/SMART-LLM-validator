@@ -1,0 +1,11 @@
+# 비밀 정보: 절대 커밋하지 않는다
+api_key.txt
+
+# 자동 생성
+__pycache__/
+*.pyc
+
+# 시뮬레이터 장면 이미지 (용량이 큼, 실행별 영상과 점수는 커밋됨)
+logs/**/*.png
+results/sim/frames_timeout_run1/
+results/sim/run1_contact_*.png

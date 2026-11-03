@@ -1,0 +1,10 @@
+﻿folder,model,orig_exec_valid,final_exec_valid,api_calls,final_issues
+Slice_the_tomato_plans_11-02-2026-14-18-40,gpt-4o-mini,True,True,0,format_fence | format_extra_text | note:unresolved_robot_index
+Throw_the_Spatula_in_the_trash_plans_11-02-2026-14-18-40,gpt-4o-mini,True,True,0,format_fence | format_extra_text
+Wash_the_lettuce_and_place_lettuce_on_the_Countertop_plans_11-02-2026-14-18-40,gpt-4o-mini,False,True,2,
+Chill_the_apple_and_wash_the_knife_plans_11-02-2026-14-49-00,gpt-4o-mini,False,True,2,
+Put_mug_in_coffee_machine_plans_11-02-2026-14-49-00,gpt-4o-mini,True,True,0,format_fence | format_extra_text
+Put_two_vegetables_in_the_fridge_parallely_plans_11-02-2026-14-49-00,gpt-4o-mini,False,True,1,
+Slice_apple_and_throw_it_in_the_trash_plans_11-02-2026-14-49-00,gpt-4o-mini,False,True,3,
+Toast_a_slice_of_the_breadloaf_plans_11-02-2026-14-49-00,gpt-4o-mini,True,True,0,format_fence | format_extra_text
+Wash_the_fork_and_put_it_in_the_bowl_plans_11-02-2026-14-49-00,gpt-4o-mini,False,False,3,skill_not_allowed:PickupObject@robot2 | skill_not_allowed:PutObject@robot2 | skill_not_allowed:SwitchOn@robot1 | skill_not_allowed:SwitchOff@robot1

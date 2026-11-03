@@ -3,7 +3,7 @@
 total_exec = 0
 success_exec = 0
 
-c = Controller( height=1000, width=1000)
+c = Controller( height=int(os.environ.get("SIM_SIZE", 1000)), width=int(os.environ.get("SIM_SIZE", 1000)))
 c.reset("FloorPlan" + str(floor_no)) 
 no_robot = len(robots)
 
@@ -263,6 +263,7 @@ def GoToObject(robots, dest_obj):
                 crp = closest_node(dest_obj_pos, reachable_positions, no_agents, clost_node_location)
     
             time.sleep(0.5)
+            while len(action_queue) > 0: time.sleep(0.05)  # 느린 PC: 큐가 밀리지 않게 대기
 
     # align the robot once goal is reached
     # compute angle between robot heading and object

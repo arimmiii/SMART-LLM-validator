@@ -1,0 +1,21 @@
+def slice_apple(robot):
+    # Subtask to slice an apple by robot1
+    GoToObject(robot, 'Knife')          # Move to Knife location
+    PickupObject(robot, 'Knife')        # Pick up Knife 
+    GoToObject(robot, 'Apple')          # Move to Apple location 
+    SliceObject(robot, 'Apple')         # Slice the apple 
+    GoToObject(robot, 'CounterTop')     # Return knife back to CounterTop 
+    PutObject(robot, 'Knife', 'CounterTop')  # Put knife back on CounterTop
+
+def throw_sliced_apple_in_trash():
+    # Subtask to throw sliced apple by robot2 
+    GoToObject(robots[1], 'Apple')      # Move to sliced apple location  
+    PickupObject(robots[1], 'Apple')    # Pick up sliced apple  
+    GoToObject(robots[1], 'GarbageCan')  # Move towards Garbage Can  
+    PutObject(robots[1], 'Apple', 'GarbageCan')   # Dispose of sliced apple 
+
+# Execute tasks sequentially as per allocation:
+slice_apple(robots[0])                     # Execute slicing task with robot1
+throw_sliced_apple_in_trash()               # Execute throwing task with robot2
+
+# Task "Slice an apple and throw it in trash" is done.

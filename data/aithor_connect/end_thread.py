@@ -1,3 +1,4 @@
+while len(action_queue) > 0: time.sleep(0.1)  # 느린 PC: 남은 동작을 모두 처리한 뒤 종료
 
 for i in range(25):
     action_queue.append({'action':'Done'})
@@ -9,7 +10,7 @@ task_over = True
 time.sleep(5)
 
 
-exec = float(success_exec) / float(total_exec)
+exec = float(success_exec) / float(total_exec) if total_exec else 0.0
 
 print (ground_truth)
 objs = list([obj for obj in c.last_event.metadata["objects"]])

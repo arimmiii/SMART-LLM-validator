@@ -1,0 +1,25 @@
+def retrieve_bread_slice(robot):
+    # SubTask 1: Retrieve a slice of bread from the loaf
+    # Go to Bread loaf.
+    GoToObject(robot, 'Bread')
+    # Pick up a slice of Bread.
+    PickupObject(robot, 'Bread')
+    # Go to Toaster.
+    GoToObject(robot, 'Toaster')
+    # Put the slice in Toaster.
+    PutObject(robot, 'Bread', 'Toaster')
+
+def toast_bread(robot):
+    # SubTask 2: Toast the slice of bread
+    # Switch on Toaster.
+    SwitchOn(robot, 'Toaster')
+    # Wait for it to toast.
+    time.sleep(5)  
+    # Switch off Toaster.
+    SwitchOff(robot, 'Toaster')
+
+# Execute SubTask for Robot 2 (Retrieve Bread Slice)
+retrieve_bread_slice(robots[1])
+
+# Execute SubTask for Robot 1 (Toast Bread)
+toast_bread(robots[0])

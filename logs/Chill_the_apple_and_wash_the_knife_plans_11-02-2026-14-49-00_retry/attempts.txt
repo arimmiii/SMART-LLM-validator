@@ -1,0 +1,3 @@
+attempt 1: exec_valid=False issues=format_fence | format_extra_text | missing_robot_arg:GoToObject | missing_robot_arg:PickupObject | missing_robot_arg:OpenObject | missing_robot_arg:PutObject | missing_robot_arg:CloseObject | missing_robot_arg:SwitchOn | missing_robot_arg:SwitchOff
+attempt 2: exec_valid=False issues=redefines_robots
+attempt 3: exec_valid=True issues=

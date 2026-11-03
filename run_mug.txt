@@ -1,0 +1,22 @@
+Going to  Mug|+00.79|+00.66|+00.55 {'x': 0.7738498449325562, 'y': 0.7079668045043945, 'z': 0.5487093329429626}
+Traceback (most recent call last):
+  File "/mnt/c/Users/LG/26-2_IS/SMART-LLM/logs/Put_mug_in_coffee_machine_plans_10-29-2026-17-39-39_retry/executable_plan.py", line 578, in <module>
+    put_mug_in_coffee_machine('robot1')
+  File "/mnt/c/Users/LG/26-2_IS/SMART-LLM/logs/Put_mug_in_coffee_machine_plans_10-29-2026-17-39-39_retry/executable_plan.py", line 569, in put_mug_in_coffee_machine
+    GoToObject(robot, 'Mug')
+  File "/mnt/c/Users/LG/26-2_IS/SMART-LLM/logs/Put_mug_in_coffee_machine_plans_10-29-2026-17-39-39_retry/executable_plan.py", line 288, in GoToObject
+    robot_name = robot['name']
+                 ~~~~~^^^^^^^^
+TypeError: string indices must be integers, not 'str'
+Exception in thread Thread-1 (exec_actions):
+Traceback (most recent call last):
+  File "/home/arim/anaconda3/lib/python3.11/threading.py", line 1038, in _bootstrap_inner
+    self.run()
+  File "/home/arim/anaconda3/lib/python3.11/threading.py", line 975, in run
+    self._target(*self._args, **self._kwargs)
+  File "/mnt/c/Users/LG/26-2_IS/SMART-LLM/logs/Put_mug_in_coffee_machine_plans_10-29-2026-17-39-39_retry/executable_plan.py", line 108, in exec_actions
+    folder_path = os.path.dirname(__file__) + "/" + folder_name
+                                  ^^^^^^^^
+NameError: name '__file__' is not defined. Did you mean: '__name__'?
+Put_mug_in_coffee_machine_plans_10-29-2026-17-39-39_retry
+No Breaks:  1

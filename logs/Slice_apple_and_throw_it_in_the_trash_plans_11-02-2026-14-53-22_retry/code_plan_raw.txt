@@ -1,0 +1,31 @@
+def slice_apple(robot):
+    # 0: SubTask 1: Slice the Apple
+    # 1: Go to the Knife using robot.
+    GoToObject(robot, 'Knife')
+    # 2: Pick up the Knife using robot.
+    PickupObject(robot, 'Knife')
+    # 3: Go to the Apple using robot.
+    GoToObject(robot, 'Apple')
+    # 4: Slice the Apple using robot.
+    SliceObject(robot, 'Apple')
+    # 5: Go to the CounterTop using robot.
+    GoToObject(robot, 'CounterTop')
+    # 6: Put the sliced Apple on the CounterTop using robot.
+    PutObject(robot, 'Apple', 'CounterTop')
+
+def throw_sliced_apple_in_trash(robot):
+    # 0: SubTask 2: Throw the sliced Apple in the trash
+    # 1: Go to the CounterTop using robot.
+    GoToObject(robot, 'CounterTop')
+    # 2: Pick up the sliced Apple from the CounterTop using robot.
+    PickupObject(robot, 'Apple')
+    # 3: Go to the GarbageCan using robot.
+    GoToObject(robot, 'GarbageCan')
+    # 4: Throw the sliced Apple in the GarbageCan using robot.
+    ThrowObject(robot, 'Apple', 'GarbageCan')
+
+# Execute SubTask 1 with Robot 1
+slice_apple(robots[0])
+
+# Execute SubTask 2 with Robot 3 after SubTask 1 is completed
+throw_sliced_apple_in_trash(robots[2])

@@ -1,0 +1,2 @@
+attempt 1: exec_valid=False issues=format_fence | format_extra_text | missing_robot_arg:PutObject | missing_robot_arg:CloseObject | ends_holding:robot1 holds Lettuce | ends_holding:robot3 holds Tomato
+attempt 2: exec_valid=True issues=

@@ -1,0 +1,33 @@
+def wash_fork(robot1, robot2):
+    # SubTask 1: Wash the Fork
+    # Step-by-step execution using both robots
+    
+    # Robot2 goes to Fork
+    GoToObject(robot2, 'Fork')
+    PickupObject(robot2, 'Fork')
+    
+    # Robot2 puts Fork in Sink for washing
+    GoToObject(robot2, 'Sink')
+    PutObject(robot2, 'Fork', 'Sink')
+    
+    # Robot1 goes to Sink to switch on Faucet
+    GoToObject(robot1, 'Sink')
+    SwitchOn(robot1, 'Faucet')
+    
+    time.sleep(5) # Wait for cleaning
+    
+    # Robot1 switches off Faucet
+    SwitchOff(robot1, 'Faucet')
+
+def put_fork_in_bowl(robot2):
+    # SubTask 2: Put Fork in Bowl using robot2
+    GoToObject(robot2, 'Bowl')
+    GoToObject(robot2, 'Sink')  # Robot2 goes back to Sink to pick up the cleaned Fork
+    PickupObject(robot2, 'Fork')  # Robot2 picks up the Fork from the Sink
+    PutObject(robot2, 'Fork', 'Bowl')
+
+# Execute SubTask 1 with team of Robots [Robot1 (faucet control), Robot2 (fork handling)]
+wash_fork(robots[0], robots[1])
+
+# Execute SubTask 2 with Robot2 alone
+put_fork_in_bowl(robots[1])

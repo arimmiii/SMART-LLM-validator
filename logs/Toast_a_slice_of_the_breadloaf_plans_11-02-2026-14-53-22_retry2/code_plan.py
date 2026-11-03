@@ -1,0 +1,19 @@
+def slice_and_toast_bread():
+    # Step 1: Robot 3 slices the Bread
+    GoToObject(robots[2], 'Bread')
+    PickupObject(robots[2], 'Bread')
+    GoToObject(robots[2], 'CounterTop')
+    SliceObject(robots[2], 'Bread')  # Robot 3 slices the bread
+    PutObject(robots[2], 'Bread', 'CounterTop')  # Place the sliced bread on the countertop
+
+    # Step 2: Robot 2 toasts the sliced Bread
+    GoToObject(robots[1], 'CounterTop')  # Robot 2 goes to the countertop
+    PickupObject(robots[1], 'Bread')  # Robot 2 picks up the sliced bread
+    GoToObject(robots[1], 'Toaster')  # Robot 2 goes to the Toaster
+    PutObject(robots[1], 'Bread', 'Toaster')  # Robot 2 puts the sliced bread in the Toaster
+    SwitchOn(robots[1], 'Toaster')  # Robot 2 switches on the Toaster
+    time.sleep(5)  # Wait for a while to let the bread toast
+    SwitchOff(robots[1], 'Toaster')  # Robot 2 switches off the Toaster
+
+# Execute SubTask with Robots for slicing and toasting
+slice_and_toast_bread()

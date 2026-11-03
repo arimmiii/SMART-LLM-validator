@@ -1,0 +1,33 @@
+To accomplish the task of chilling the apple and washing the knife, we can break it down into two independent subtasks:
+
+1. **Chill the Apple**: This involves putting the apple in the fridge.
+2. **Wash the Knife**: This involves cleaning the knife in the sink.
+
+### Skills Required for Each Subtask:
+- **Chill the Apple**:
+  - Skills Required: `GoToObject`, `PickupObject`, `OpenObject`, `PutObject`, `CloseObject`
+  
+- **Wash the Knife**:
+  - Skills Required: `GoToObject`, `PickupObject`, `PutObject`, `SwitchOn`, `SwitchOff`
+
+### Robot Capabilities:
+We have two robots available, both with identical skills and mass capacity:
+
+```python
+robots = [
+    {'name': 'robot1', 'skills': ['GoToObject', 'OpenObject', 'CloseObject', 'BreakObject', 'SliceObject', 'SwitchOn', 'SwitchOff', 'PickupObject', 'PutObject', 'DropHandObject', 'ThrowObject', 'PushObject', 'PullObject'], 'mass': 100},
+    {'name': 'robot2', 'skills': ['GoToObject', 'OpenObject', 'CloseObject', 'BreakObject', 'SliceObject', 'SwitchOn', 'SwitchOff', 'PickupObject', 'PutObject','DropHand Object','Throw Object','Push Object','Pull Object'],'mass': 100}
+]
+```
+
+### Objects Involved:
+- **Apple** (mass = 0.2)
+- **Knife** (mass = 0.18)
+
+### Task Allocation Analysis:
+1. Both subtasks can be performed in parallel since they are independent of each other.
+2. Each robot has all necessary skills to perform both tasks.
+3. The mass of both objects (apple and knife) is well within each robot's mass capacity.
+
+### Robot Allocation Strategy:
+Since both robots have identical capabilities, we

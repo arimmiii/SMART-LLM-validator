@@ -66,7 +66,7 @@ if __name__ == "__main__":
     parser.add_argument("--floor-plan", type=int, required=True)
     parser.add_argument("--openai-api-key-file", type=str, default="api_key")
     parser.add_argument("--gpt-version", type=str, default="gpt-4", 
-                        choices=['gpt-3.5-turbo', 'gpt-4', 'gpt-3.5-turbo-16k'])
+                        choices=['gpt-3.5-turbo', 'gpt-4', 'gpt-3.5-turbo-16k', 'gpt-4o-mini', 'gpt-4o'])
     
     parser.add_argument("--prompt-decompse-set", type=str, default="train_task_decompose", 
                         choices=['train_task_decompose'])
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     for robots_list in robots_test_tasks:
         task_robots = []
         for i, r_id in enumerate(robots_list):
-            rob = robots.robots [r_id-1]
+            rob = copy.deepcopy(robots.robots[r_id-1])
             # rename the robot
             rob['name'] = 'robot' + str(i+1)
             task_robots.append(rob)
@@ -181,7 +181,7 @@ if __name__ == "__main__":
         else:          
             # gpt 4.0
             messages = [{"role": "system", "content": "You are a Robot Task Allocation Expert. Determine whether the subtasks must be performed sequentially or in parallel, or a combination of both based on your reasoning. In the case of Task Allocation based on Robot Skills alone - First check if robot teams are required. Then Ensure that robot skills or robot team skills match the required skills for the subtask when allocating. Make sure that condition is met. In the case of Task Allocation based on Mass alone - First check if robot teams are required. Then Ensure that robot mass capacity or robot team combined mass capacity is greater than or equal to the mass for the object when allocating. Make sure that condition is met. In both the Task Task Allocation based on Mass alone and Task Allocation based on Skill alone, if there are multiple options for allocation, pick the best available option by reasoning to the best of your ability."},{"role": "system", "content": "You are a Robot Task Allocation Expert"},{"role": "user", "content": curr_prompt}]
-            _, text = LM(messages, args.gpt_version, max_tokens=400, frequency_penalty=0.69)
+            _, text = LM(messages, args.gpt_version, max_tokens=int(os.environ.get("ALLOC_MAX_TOKENS", 400)), frequency_penalty=0.69)
 
         allocated_plan.append(text)
     

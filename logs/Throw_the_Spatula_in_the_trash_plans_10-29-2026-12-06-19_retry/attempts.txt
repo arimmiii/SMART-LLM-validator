@@ -1,0 +1,3 @@
+attempt 1: exec_valid=False issues=format_fence | format_extra_text | not_holding:ThrowObject(Spatula)@robot1
+attempt 2: exec_valid=False issues=skill_not_allowed:ThrowObject@robot2
+attempt 3: exec_valid=True issues=

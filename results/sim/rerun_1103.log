@@ -1,0 +1,57 @@
+=== Wash_the_fork_and_put_it_in_the_bowl_plans_11-02-2026-14-55-52_retry2 09:02:46
+exit=0
+[libx264 @ 0x3ffada80] mb B  I16..4:  0.0%  0.2%  0.3%  B16..8:  3.8%  1.4%  0.6%  direct: 0.4%  skip:93.4%  L0:49.0% L1:46.0% BI: 4.9%
+[libx264 @ 0x3ffada80] 8x8 transform intra:41.6% inter:40.2%
+[libx264 @ 0x3ffada80] coded y,uvDC,uvAC intra: 83.2% 46.7% 31.1% inter: 1.6% 0.6% 0.0%
+[libx264 @ 0x3ffada80] i16 v,h,dc,p: 10% 31%  6% 53%
+[libx264 @ 0x3ffada80] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 18% 15% 13%  7%  7%  8%  7% 10% 15%
+[libx264 @ 0x3ffada80] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 27% 20% 15%  6%  6%  6%  6%  6%  7%
+[libx264 @ 0x3ffada80] i8c dc,h,v,p: 57% 20% 20%  4%
+[libx264 @ 0x3ffada80] Weighted P-Frames: Y:0.0% UV:0.0%
+[libx264 @ 0x3ffada80] ref P L0: 60.0%  7.9% 15.5% 16.5%
+[libx264 @ 0x3ffada80] ref B L0: 84.3% 11.8%  3.8%
+[libx264 @ 0x3ffada80] ref B L1: 93.3%  6.7%
+[libx264 @ 0x3ffada80] kb/s:74.10
+=== Wash_the_lettuce_and_place_lettuce_on_the_Countertop_plans_11-02-2026-14-33-44_retry2 09:12:37
+exit=0
+[libx264 @ 0x3ef16ac0] mb B  I16..4:  0.0%  0.0%  0.1%  B16..8:  3.7%  0.6%  0.3%  direct: 0.5%  skip:94.8%  L0:46.7% L1:50.5% BI: 2.9%
+[libx264 @ 0x3ef16ac0] 8x8 transform intra:42.1% inter:55.4%
+[libx264 @ 0x3ef16ac0] coded y,uvDC,uvAC intra: 97.5% 95.9% 76.8% inter: 2.0% 2.2% 0.4%
+[libx264 @ 0x3ef16ac0] i16 v,h,dc,p: 88%  6%  6%  0%
+[libx264 @ 0x3ef16ac0] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 44%  9% 11%  3%  6%  7%  7%  7%  6%
+[libx264 @ 0x3ef16ac0] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 37% 14% 10%  7%  6%  8%  6%  8%  6%
+[libx264 @ 0x3ef16ac0] i8c dc,h,v,p: 35% 25% 29% 12%
+[libx264 @ 0x3ef16ac0] Weighted P-Frames: Y:0.0% UV:0.0%
+[libx264 @ 0x3ef16ac0] ref P L0: 53.4% 13.3% 19.3% 14.0%
+[libx264 @ 0x3ef16ac0] ref B L0: 77.2% 15.3%  7.5%
+[libx264 @ 0x3ef16ac0] ref B L1: 91.5%  8.5%
+[libx264 @ 0x3ef16ac0] kb/s:88.72
+=== Slice_the_tomato_plans_11-02-2026-14-33-44_retry2 09:21:15
+exit=124
+
+Reached:  Tomato
+Reached:  Knife
+robot1 picked up the Knife.
+PIcking:  Knife
+Picking Up  Knife|-00.64|+00.91|+01.62 {'x': -0.6178590059280396, 'y': 0.9067928791046143, 'z': 1.6430226564407349}
+robot1 is slicing the Tomato.
+Slicing:  Tomato
+Going to  Tomato|+01.30|+00.96|-01.08 {'x': 1.3, 'y': 0.96, 'z': -1.08}
+Reached:  Tomato|+01.30|+00.96|-01.08
+robot1 is putting back the Knife.
+Going to  CounterTop|-00.36|+00.95|+01.09 {'x': -0.34021228551864624, 'y': 0.9094499349594116, 'z': 1.0938019752502441}
+=== Slice_the_tomato_plans_11-02-2026-14-18-40_retry2 09:51:18
+exit=0
+[libx264 @ 0x25d02b80] mb B  I16..4:  0.0%  0.0%  0.1%  B16..8:  4.5%  0.5%  0.2%  direct: 0.4%  skip:94.3%  L0:50.2% L1:47.3% BI: 2.5%
+[libx264 @ 0x25d02b80] 8x8 transform intra:42.1% inter:50.1%
+[libx264 @ 0x25d02b80] coded y,uvDC,uvAC intra: 96.9% 96.9% 76.0% inter: 1.9% 2.0% 0.4%
+[libx264 @ 0x25d02b80] i16 v,h,dc,p: 80% 10% 10%  0%
+[libx264 @ 0x25d02b80] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 49%  8% 10%  4%  6%  7%  6%  5%  5%
+[libx264 @ 0x25d02b80] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 37% 13% 11%  7%  6%  7%  6%  7%  6%
+[libx264 @ 0x25d02b80] i8c dc,h,v,p: 38% 23% 30%  9%
+[libx264 @ 0x25d02b80] Weighted P-Frames: Y:0.0% UV:0.0%
+[libx264 @ 0x25d02b80] ref P L0: 56.6% 12.2% 16.9% 14.3%
+[libx264 @ 0x25d02b80] ref B L0: 83.8% 11.5%  4.7%
+[libx264 @ 0x25d02b80] ref B L1: 93.9%  6.1%
+[libx264 @ 0x25d02b80] kb/s:83.04
+DONE

@@ -1,0 +1,4 @@
+attempt 1: exec_valid=False issues=format_fence | format_extra_text | receptacle_rejects:Bread must be sliced before Toaster
+attempt 2: exec_valid=False issues=missing_robot_arg:GoToObject | missing_robot_arg:PickupObject | missing_robot_arg:SliceObject | missing_robot_arg:PutObject | missing_robot_arg:SwitchOn | missing_robot_arg:SwitchOff
+attempt 3: exec_valid=False issues=skill_not_allowed:PickupObject@robot1 | skill_not_allowed:PutObject@robot3 | not_holding:PutObject(Bread)@robot3 | not_holding:PutObject(Bread)@robot2 | skill_not_allowed:SwitchOn@robot2 | skill_not_allowed:SwitchOff@robot2 | ends_holding:robot1 holds Bread
+attempt 4: exec_valid=False issues=skill_not_allowed:PutObject@robot3 | skill_not_allowed:SwitchOn@robot2 | skill_not_allowed:SwitchOff@robot2

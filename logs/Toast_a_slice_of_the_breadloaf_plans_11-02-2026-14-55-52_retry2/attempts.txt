@@ -1,0 +1,4 @@
+attempt 1: exec_valid=False issues=format_fence | format_extra_text | receptacle_rejects:Bread must be sliced before Toaster
+attempt 2: exec_valid=False issues=skill_not_allowed:PutObject@robot3
+attempt 3: exec_valid=False issues=ends_holding:robot3 holds Bread
+attempt 4: exec_valid=False issues=not_holding:PutObject(Bread)@robot2 | ends_holding:robot3 holds Bread

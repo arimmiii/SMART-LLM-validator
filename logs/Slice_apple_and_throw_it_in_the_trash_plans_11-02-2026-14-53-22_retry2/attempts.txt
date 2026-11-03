@@ -1,0 +1,4 @@
+attempt 1: exec_valid=False issues=format_fence | format_extra_text | redefines_robots | missing_robot_arg:SliceObject | missing_robot_arg:PutObject | ends_holding:robot1 holds Knife | ends_holding:robot2 holds Apple
+attempt 2: exec_valid=False issues=missing_robot_arg:SliceObject | skill_not_allowed:PutObject@robot1
+attempt 3: exec_valid=False issues=missing_robot_arg:SliceObject | missing_robot_arg:ThrowObject | skill_not_allowed:PutObject@robot1
+attempt 4: exec_valid=False issues=skill_not_allowed:PutObject@robot1 | skill_not_allowed:PickupObject@robot3

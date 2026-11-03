@@ -1,0 +1,16 @@
+def throw_spatula_in_trash(robot_list):
+    # robot_list = [robot1, robot2]
+    # 0: SubTask 1: Throw the Spatula in the Trash
+    # 1: Robot 2 goes to the Spatula.
+    GoToObject(robot_list[1], 'Spatula')
+    # 2: Robot 2 picks up the Spatula.
+    PickupObject(robot_list[1], 'Spatula')
+    # 3: Robot 2 goes to the Garbage Can.
+    GoToObject(robot_list[1], 'GarbageCan')
+    # 4: Robot 2 puts the Spatula in the Garbage Can.
+    PutObject(robot_list[1], 'Spatula', 'GarbageCan')
+
+# Execute SubTask with robot2
+throw_spatula_in_trash([robots[0], robots[1]])
+
+# Task throw the spatula in the trash is done

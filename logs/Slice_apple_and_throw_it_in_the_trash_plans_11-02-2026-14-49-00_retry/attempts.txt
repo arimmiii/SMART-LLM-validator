@@ -1,0 +1,4 @@
+attempt 1: exec_valid=False issues=format_fence | format_extra_text | skill_not_allowed:PutObject@robot1
+attempt 2: exec_valid=False issues=missing_robot_arg:SliceObject | missing_robot_arg:PutObject
+attempt 3: exec_valid=False issues=skill_not_allowed:PutObject@robot1
+attempt 4: exec_valid=True issues=

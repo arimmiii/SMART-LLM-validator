@@ -1,0 +1,2 @@
+attempt 1: exec_valid=False issues=format_fence | format_extra_text | double_pickup:robot1 holds Knife, picks Tomato
+attempt 2: exec_valid=True issues=

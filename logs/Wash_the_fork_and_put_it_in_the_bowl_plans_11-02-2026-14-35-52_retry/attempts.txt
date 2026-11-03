@@ -1,0 +1,4 @@
+attempt 1: exec_valid=False issues=format_fence | format_extra_text | redefines_robots | skill_not_allowed:SwitchOn@robot1 | skill_not_allowed:PickupObject@robot2 | skill_not_allowed:PutObject@robot2
+attempt 2: exec_valid=False issues=skill_not_allowed:SwitchOn@robot1 | skill_not_allowed:PickupObject@robot2 | skill_not_allowed:PutObject@robot2
+attempt 3: exec_valid=False issues=skill_not_allowed:SwitchOn@robot1 | skill_not_allowed:PickupObject@robot2 | skill_not_allowed:PutObject@robot2
+attempt 4: exec_valid=False issues=skill_not_allowed:SwitchOn@robot1 | skill_not_allowed:PickupObject@robot2 | skill_not_allowed:PutObject@robot2

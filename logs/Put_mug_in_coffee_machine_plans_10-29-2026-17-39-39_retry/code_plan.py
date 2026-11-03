@@ -1,0 +1,15 @@
+def put_mug_in_coffee_machine(robot):
+    # Step-by-step execution of SubTask 1
+    # Go to the Mug.
+    GoToObject(robot, 'Mug')
+    # Pick up the Mug.
+    PickupObject(robot, 'Mug')
+    # Go to the Coffee Machine.
+    GoToObject(robot, 'CoffeeMachine')
+    # Put the Mug in the Coffee Machine.
+    PutObject(robot, 'Mug', 'CoffeeMachine')
+
+# Execute SubTask 1 using Robot 1
+put_mug_in_coffee_machine(robots[0])
+
+# Task put mug in coffee machine is done

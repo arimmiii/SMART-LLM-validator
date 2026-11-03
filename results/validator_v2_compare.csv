@@ -1,0 +1,19 @@
+﻿group,folder,old_valid_newrules,old_goal,new_valid,new_goal,new_issues
+400,Slice_the_tomato_plans_11-02-2026-14-18-40,False,False,True,True,
+400,Throw_the_Spatula_in_the_trash_plans_11-02-2026-14-18-40,True,True,True,True,
+400,Wash_the_lettuce_and_place_lettuce_on_the_Countertop_plans_11-02-2026-14-18-40,False,False,True,True,note:unresolved_robot_index
+400,Chill_the_apple_and_wash_the_knife_plans_11-02-2026-14-53-22,True,True,True,True,note:unresolved_robot_index
+400,Put_mug_in_coffee_machine_plans_11-02-2026-14-53-22,True,True,True,True,
+400,Put_two_vegetables_in_the_fridge_parallely_plans_11-02-2026-14-53-22,True,False,True,False,
+400,Slice_apple_and_throw_it_in_the_trash_plans_11-02-2026-14-53-22,False,,False,,skill_not_allowed:PutObject@robot1 | skill_not_allowed:PickupObject@robot3
+400,Toast_a_slice_of_the_breadloaf_plans_11-02-2026-14-53-22,False,False,False,True,skill_not_allowed:PutObject@robot3 | skill_not_allowed:SwitchOn@robot2 | skill_not_allowed:SwitchOff@robot2
+400,Wash_the_fork_and_put_it_in_the_bowl_plans_11-02-2026-14-53-22,True,True,True,True,
+1500,Slice_the_tomato_plans_11-02-2026-14-33-44,True,True,True,True,
+1500,Throw_the_Spatula_in_the_trash_plans_11-02-2026-14-33-44,True,True,True,True,
+1500,Wash_the_lettuce_and_place_lettuce_on_the_Countertop_plans_11-02-2026-14-33-44,True,True,True,True,
+1500,Chill_the_apple_and_wash_the_knife_plans_11-02-2026-14-55-52,False,False,True,True,
+1500,Put_mug_in_coffee_machine_plans_11-02-2026-14-55-52,True,True,True,True,
+1500,Put_two_vegetables_in_the_fridge_parallely_plans_11-02-2026-14-55-52,True,False,True,False,
+1500,Slice_apple_and_throw_it_in_the_trash_plans_11-02-2026-14-55-52,False,True,False,,not_holding:PutObject(Knife)@robot2 | ends_holding:robot1 holds Knife
+1500,Toast_a_slice_of_the_breadloaf_plans_11-02-2026-14-55-52,False,False,False,True,not_holding:PutObject(Bread)@robot2 | ends_holding:robot3 holds Bread
+1500,Wash_the_fork_and_put_it_in_the_bowl_plans_11-02-2026-14-55-52,True,True,True,True,
